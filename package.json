@@ -1,15 +1,25 @@
 {
+<<<<<<< HEAD
   "name": "backend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+=======
+  "name": "bookmanagementbackend-main",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node api/server.js"
+>>>>>>> 603e548 (Updated code)
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+<<<<<<< HEAD
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -21,5 +31,17 @@
     "nodemon": "^3.1.9",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
+=======
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "nodemailer": "^7.0.3",
+    "nodemon": "^3.1.10",
+    "serverless-http": "^3.2.0"
+>>>>>>> 603e548 (Updated code)
   }
 }
