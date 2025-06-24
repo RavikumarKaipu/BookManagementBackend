@@ -165,32 +165,55 @@ app.delete('/users/:id',authenticateToken,async (req,res)=>{
 
 // —– Books CRUD —–
 
-app.get('/books', async (req, res) => {
-  const books = await Book.find();
-  res.json(books);
+
+app.get('/books', authenticateToken, async (req, res) => {
+  try {
+    const books = await Book.find({ userId: req.user.id }); // ← only this user's books
+    res.json(books);
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching books' });
+  }
 });
 
-app.post('/books', async (req, res) => {
-  const book = await new Book(req.body).save();
-  res.status(201).json(book);
+
+app.post('/books', authenticateToken, async (req, res) => {
+  const newBook = new Book({
+    ...req.body,
+    userId: req.user.id, // ← set from decoded token
+  });
+
+  try {
+    const savedBook = await newBook.save();
+    res.status(201).json(savedBook);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save book' });
+  }
 });
 
-app.get('/books/:id', async (req, res) => {
-  const book = await Book.findById(req.params.id);
-  if (!book) return res.status(404).json({ error: 'Book not found' });
+
+app.get('/books/:id', authenticateToken, async (req, res) => {
+  const book = await Book.findOne({ _id: req.params.id, userId: req.user.id });
+  if (!book) return res.status(404).json({ error: 'Not found or unauthorized' });
+
   res.json(book);
 });
 
 app.put('/books/:id', authenticateToken, async (req, res) => {
-  const book = await Book.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  if (!book) return res.status(404).json({ error: 'Book not found' });
+
+
+  const book = await Book.findOneAndUpdate(
+    { _id: req.params.id, userId: req.user.id },
+    req.body,
+    { new: true }
+  );
+  if (!book) return res.status(404).json({ error: 'Not found or unauthorized' });
   res.json(book);
 });
 
 app.delete('/books/:id', authenticateToken, async (req, res) => {
-  const book = await Book.findByIdAndDelete(req.params.id);
-  if (!book) return res.status(404).json({ error: 'Book not found' });
-  res.status(204).end();
+  const book = await Book.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+  if (!book) return res.status(404).json({ error: 'Not found or unauthorized' });
+  res.json({ message: 'Deleted successfully' });
 });
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

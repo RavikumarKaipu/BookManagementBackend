@@ -6,6 +6,11 @@ const bookSchema = new mongoose.Schema({
   Genre: String,
   Pages: Number,
   PublishedDate: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  }
 });
 
 module.exports = mongoose.model('Book', bookSchema);
