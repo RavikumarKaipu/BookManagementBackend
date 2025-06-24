@@ -177,18 +177,24 @@ app.get('/books', authenticateToken, async (req, res) => {
 
 
 app.post('/books', authenticateToken, async (req, res) => {
-  const newBook = new Book({
-    ...req.body,
-    userId: req.user.id, // ← set from decoded token
-  });
-
   try {
+    const newBook = new Book({
+      Title: req.body.Title,
+      Author: req.body.Author,
+      Genre: req.body.Genre,
+      Pages: req.body.Pages,
+      PublishedDate: req.body.PublishedDate,
+      userId: req.user.id, // ✅ attach userId from token
+    });
+
     const savedBook = await newBook.save();
     res.status(201).json(savedBook);
   } catch (err) {
+    console.error('Failed to save book:', err);
     res.status(500).json({ error: 'Failed to save book' });
   }
 });
+
 
 
 app.get('/books/:id', authenticateToken, async (req, res) => {
