@@ -2,7 +2,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const User = require('../models/User'); // Adjust path to your User model
+const User = require('../models/User'); 
 
 const createAdmin = async () => {
   await mongoose.connect(process.env.MONGO_URI); // or your DB URI directly
