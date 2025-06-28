@@ -168,12 +168,24 @@ app.delete('/users/:id',authenticateToken,async (req,res)=>{
 
 app.get('/books', authenticateToken, async (req, res) => {
   try {
-    const books = await Book.find({ userId: req.user.id }); // ← only this user's books
+    const books = await Book.find({ userId: req.user.id });
     res.json(books);
   } catch (err) {
     res.status(500).json({ error: 'Error fetching books' });
   }
 });
+
+app.get('/allbooks',authenticateToken,async (req,res)=>{
+  try{
+    const books=await Book.find();
+    res.json(books);
+
+  }catch(err){
+    res.status(500).json({ error: 'Error fetching books' });
+
+  }
+}
+)
 
 
 app.post('/books', authenticateToken, async (req, res) => {
@@ -205,8 +217,6 @@ app.get('/books/:id', authenticateToken, async (req, res) => {
 });
 
 app.put('/books/:id', authenticateToken, async (req, res) => {
-
-
   const book = await Book.findOneAndUpdate(
     { _id: req.params.id, userId: req.user.id },
     req.body,
