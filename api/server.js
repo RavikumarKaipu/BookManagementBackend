@@ -168,12 +168,37 @@ app.delete('/users/:id',authenticateToken,async (req,res)=>{
 
 app.get('/books', authenticateToken, async (req, res) => {
   try {
-    const books = await Book.find({ userId: req.user.id });
-    res.json(books);
+    const { query = '', genre = '', page = 1, limit = 10 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const filters = { userId: req.user.id };
+
+    if (query) {
+      filters.Title = { $regex: query, $options: 'i' }; // case-insensitive title search
+    }
+
+    if (genre) {
+      filters.Genre = { $regex: genre, $options: 'i' }; // case-insensitive genre filter
+    }
+
+    const books = await Book.find(filters)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalBooks = await Book.countDocuments(filters);
+
+    res.json({
+      books,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalBooks / limit),
+      totalBooks,
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Error fetching books' });
+    console.error('Error fetching filtered books:', err);
+    res.status(500).json({ error: 'Error fetching filtered books' });
   }
 });
+
 
 app.get('/allbooks',authenticateToken,async (req,res)=>{
   try{
